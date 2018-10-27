@@ -4,7 +4,7 @@ This is a re-implementation of several UNIX file utilities for the class System 
 Authors: Phan Ngoc Lan, Nguyen Duy Manh
 
 [![GPL license](http://img.shields.io/badge/license-GPL-brightgreen.svg)](https://opensource.org/licenses/GPL-3.0)
-[![Build Status](https://travis-ci.org/lanPN85/xfiles.svg?branch=master)](https://travis-ci.org/lanPN85/xfiles)
+[![Build Status](https://travis-ci.org/lanPN85/xfiles.svg?branch=lanpn)](https://travis-ci.org/lanPN85/xfiles)
 
 ## Status
 | Name  	| Description               	| Status                                                          	|
