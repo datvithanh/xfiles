@@ -4,3 +4,4 @@ compiler: gcc
 
 git:
   quiet: true
+  depth: false
