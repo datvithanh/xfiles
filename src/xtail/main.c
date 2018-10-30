@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "argparse.h"
+#include "core.h"
 
 static struct argp parser = { options, parse_opts, args_doc, doc };
 
@@ -16,6 +18,22 @@ int main(int argc, char **argv) {
 	arguments.retry = 0;
 
 	argp_parse(&parser, argc, argv, 0, 0, &arguments);
-	
+	char* file = arguments.files[0];
+	int count = 0;
+	while (file) {
+		file = arguments.files[++count];
+	}
+
+	for (int i=0; i<count; i++) {
+		file = arguments.files[i];
+		if ((count > 1 && !arguments.quiet) || arguments.verbose) {
+			printf("==> %s <==\n", file);
+		}
+
+		if (arguments.retry) {
+			while(tail_seek_print(file, arguments.lines)) sleep(1);
+		} else tail_seek_print(file, arguments.lines);
+	}
+
 	return 0;
 }

@@ -7,7 +7,7 @@
 const char *argp_program_version = "0.1.0";
 const char *argp_program_bug_address = "<phan.ngoclan58@gmail.com>";
 static char doc[] = "Re-implementation of GNU tail.";
-static char args_doc[] = "[OPTION]... [FILE]...";
+static char args_doc[] = "[FILE...]";
 
 static struct argp_option options[] = {
 	{"follow", 'f', "[=descriptor|name]", 0, "Output appended data as the file grows. Defaults to descriptor."},
@@ -44,6 +44,10 @@ static error_t parse_opts(int key, char *arg, struct argp_state *state) {
 		case 'n':
 			if (!arg) return ARGP_ERR_UNKNOWN;
 			arguments->lines = atoi(arg);
+			if (arguments->lines < 0) {
+				fprintf(stderr, "%d is not a valid number of lines", arguments->lines);
+				return ARGP_ERR_UNKNOWN;
+			}
 			break;
 		case OPT_RETRY:
 			arguments->retry = 1;
@@ -51,7 +55,7 @@ static error_t parse_opts(int key, char *arg, struct argp_state *state) {
 		case ARGP_KEY_NO_ARGS:
 			argp_usage(state);
 		case ARGP_KEY_ARG:
-			arguments->files = &state->argv[state->arg_num];
+			arguments->files = &state->argv[state->next - 1];
 			state->next = state->argc;
 			break;
 		default:

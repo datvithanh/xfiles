@@ -1,6 +1,10 @@
 language: c
-script: "make"
+script: "make && make test"
 compiler: gcc
+
+before_install:
+  - git clone https://github.com/sstephenson/bats
+  - cd bats && sudo ./install.sh /usr/local
 
 git:
   quiet: true
