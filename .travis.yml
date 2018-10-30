@@ -3,7 +3,7 @@ script: "make && make test"
 compiler: gcc
 
 before_install:
-  - //scripts/install_bats.sh
+  - ./scripts/install_bats.sh
 
 git:
   quiet: true
