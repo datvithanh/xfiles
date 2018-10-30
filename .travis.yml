@@ -2,8 +2,16 @@ language: c
 script: "make && make test"
 compiler: gcc
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-5
+
 before_install:
   - sudo ./scripts/install_bats.sh
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
 
 git:
   quiet: true
