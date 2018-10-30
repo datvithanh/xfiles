@@ -1,5 +1,7 @@
 language: c
-script: "make && make test"
+script: 
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - make && make test
 compiler: gcc
 
 addons:
@@ -11,7 +13,6 @@ addons:
 
 before_install:
   - sudo ./scripts/install_bats.sh
-  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
 
 git:
   quiet: true
