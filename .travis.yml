@@ -1,8 +1,11 @@
 language: c
+sudo: required
 script: 
   - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - gcc --version
   - make && make test
-compiler: gcc
+env:
+  CC=gcc-5
 
 addons:
   apt:
