@@ -23,7 +23,6 @@ int tail_std_print(const char* path, int lines) {
 	int lineCount = 0;
 
 	char c = fgetc(f);
-	int trail_nl = 0;
 	while (c != EOF) {
 		if(idx == size) {
 			size += BUF_EXP_SIZE;
@@ -39,9 +38,6 @@ int tail_std_print(const char* path, int lines) {
 			lineCount++;
 			size = BUF_INIT_SIZE, idx = 0;
 			line = (char*) malloc (size * sizeof(char));
-			trail_nl = 1;
-		} else {
-			trail_nl = 0;
 		}
 
 		c = fgetc(f);
