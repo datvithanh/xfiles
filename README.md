@@ -9,4 +9,4 @@ Authors: Phan Ngoc Lan, Nguyen Duy Manh
 | Name  	| Description               	| Status                                                          	|
 |-------	|---------------------------	|-----------------------------------------------------------------	|
 | xtail 	| Re-implementation of tail 	| ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg) 	|
-|       	|                           	|                                                                 	|
+|       	|                           	|                                                            	    |

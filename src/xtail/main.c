@@ -27,12 +27,13 @@ int main(int argc, char **argv) {
 	for (int i=0; i<count; i++) {
 		file = arguments.files[i];
 		if ((count > 1 && !arguments.quiet) || arguments.verbose) {
+			if (i) printf("\n");
 			printf("==> %s <==\n", file);
 		}
 
 		if (arguments.retry) {
-			while(tail_seek_print(file, arguments.lines)) sleep(1);
-		} else tail_seek_print(file, arguments.lines);
+			while(tail_std_print(file, arguments.lines)) sleep(1);
+		} else tail_std_print(file, arguments.lines);
 	}
 
 	return 0;
