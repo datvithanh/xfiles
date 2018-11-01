@@ -38,6 +38,12 @@ export PATH=$PATH:../../bin/
 	[[ $t1 == $t2 ]]
 }
 
+@test "Quiet test" {
+	t1="$(xtail -q test1.txt test2.txt)"
+	t2="$(tail -q test1.txt test2.txt)"
+	[[ $t1 == $t2 ]]
+}
+
 @test "Overflow test" {
 	t1="$(xtail -n 150 test1.txt)"
 	t2="$(tail -n 150 test1.txt)"
