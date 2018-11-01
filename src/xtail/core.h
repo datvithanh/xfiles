@@ -6,8 +6,8 @@
 #include <sys/types.h>
 #include <errno.h>
 
-#define BUF_EXP_SIZE 32
-#define BUF_INIT_SIZE 128
+#define BUF_EXP_SIZE 512
+#define BUF_INIT_SIZE 1024
 
 int tail_std_print(const char* path, int lines) {
 	FILE* f = fopen(path, "rt");
@@ -19,6 +19,7 @@ int tail_std_print(const char* path, int lines) {
 	int size = BUF_INIT_SIZE, idx = 0;
 	char* line = (char*) malloc (size * sizeof(char));
 	char** lineBuf = (char**) malloc(lines * sizeof(char*));
+	int* strSizes = (int*) malloc(lines * sizeof(int));
 	memset(lineBuf, 0, lines);
 	int lineCount = 0;
 
@@ -31,10 +32,8 @@ int tail_std_print(const char* path, int lines) {
 
 		line[idx++] = c;
 		if(c == '\n') {
-			line[idx] = '\0';
-			// if (lineBuf[lineCount % lines])
-			// 	free(lineBuf[lineCount % lines]);
 			lineBuf[lineCount % lines] = line;
+			strSizes[lineCount % lines] = idx;
 			lineCount++;
 			size = BUF_INIT_SIZE, idx = 0;
 			line = (char*) malloc (size * sizeof(char));
@@ -45,17 +44,17 @@ int tail_std_print(const char* path, int lines) {
 
 	// Flush everything left
 	if (idx) {
-		line[idx] = '\0';
 		if (lineBuf[lineCount % lines])
 			free(lineBuf[lineCount % lines]);
 		lineBuf[lineCount % lines] = line;
+		strSizes[lineCount % lines] = idx;
 		lineCount++;
 	}
 	
 	for (int i=0; i<lines; i++) {
 		int aci = (lineCount + i) % lines;
 		if (lineBuf[aci]) {
-			printf("%s", lineBuf[aci]);
+			write(STDOUT_FILENO, lineBuf[aci], strSizes[aci]);
 			free(lineBuf[aci]);
 		}
 	}

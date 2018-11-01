@@ -12,6 +12,7 @@ static char args_doc[] = "[FILE...]";
 static struct argp_option options[] = {
 	{"follow", 'f', "[=descriptor|name]", 0, "Output appended data as the file grows. Defaults to descriptor."},
 	{"lines", 'n', "NUM", 0, "Output the last NUM lines. Defaults to 10"},
+	{"sleep-interval", 's', "N", 0, "Sleep for approximately N seconds (default  1.0) between iterations"},
 	{"quiet", 'q', 0, 0, "Never output headers"},
 	{"verbose", 'v', 0, 0, "Always output headers"},
 	{"retry", OPT_RETRY, 0, 0, "Keep trying to open a file if it's inaccessible"},
@@ -22,7 +23,7 @@ struct Arguments {
 	char **files;
 	char* follow;
 	int lines;
-	int quiet, verbose, retry;
+	int quiet, verbose, retry, sleep;
 };
 
 static error_t parse_opts(int key, char *arg, struct argp_state *state) {
@@ -32,10 +33,19 @@ static error_t parse_opts(int key, char *arg, struct argp_state *state) {
 		case 'q':
 			arguments->quiet = 1;
 			break;
-		case 'f':
-			arguments->follow = arg ? arg : "descriptor";
-			if (strcmp(arguments->follow, "descriptor") || strcmp(arguments->follow, "name")) {
+		case 's':
+			if (!arg) return ARGP_ERR_UNKNOWN;
+			arguments->sleep = atoi(arg);
+			if (arguments->lines < 1) {
+				fprintf(stderr, "%d is not a valid sleep interval", arguments->sleep);
 				return ARGP_ERR_UNKNOWN;
+			}
+			break;
+		case 'f':
+			arguments->follow = arg;
+			if (strcmp(arguments->follow, "descriptor") || strcmp(arguments->follow, "name")) {
+				arguments->follow = "descriptor";
+				state->next--;
 			}
 			break;
 		case 'v':
