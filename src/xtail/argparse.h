@@ -43,7 +43,7 @@ static error_t parse_opts(int key, char *arg, struct argp_state *state) {
 			break;
 		case 'f':
 			arguments->follow = arg;
-			if (strcmp(arguments->follow, "descriptor") || strcmp(arguments->follow, "name")) {
+			if (strcmp(arg, "descriptor") && strcmp(arg, "name")) {
 				arguments->follow = "descriptor";
 				state->next--;
 			}

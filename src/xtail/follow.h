@@ -6,10 +6,6 @@
 
 #define PRINT_BUF_SIZE 1024
 
-enum PollMode {
-	POLL_FD, POLL_NAME
-};
-
 static volatile int* watched_fds;
 static volatile int num_fd = 0;
 
@@ -69,26 +65,77 @@ int tail_fd_poll(char** paths, int sleep_s, int retry) {
 				if (watched_fds[i] != -1) {
 					ofss[i] = lseek(watched_fds[i], 0, SEEK_END);
 				} else {
-					continue;
+					if (retry)
+						continue;
+					else {
+						perror("open");
+						return errno;
+					}
 				}
 			}
 
 			// With valid fd
 			off_t n_ofs = lseek(watched_fds[i], 0, SEEK_END);
 			if (n_ofs == -1) {
-				// TODO Maybe handle this differently
-				continue;
+				if(!retry) {
+					perror("lseek");
+					return errno;
+				}
 			} else if (n_ofs != ofss[i]) {
 				print_offset(watched_fds[i], ofss[i]);
 				ofss[i] = n_ofs;
 			}
-
-			sleep(sleep_s);
 		}
+		sleep(sleep_s);
 	}
 }
 
 int tail_name_poll(char** paths, int sleep_s, int retry) {
 	num_fd = count_items(paths);
 	watched_fds = (int*) malloc (sizeof(int) * num_fd);
+	off_t *ofss = (off_t*) malloc (num_fd * sizeof(off_t));
+
+	for (int i=0; i<num_fd; i++) {
+		watched_fds[i] = open(paths[i], O_RDONLY);
+		if (!retry && watched_fds[i] == -1) {
+			perror("open");
+			return errno;
+		}
+		if (watched_fds[i] != -1) {
+			ofss[i] = lseek(watched_fds[i], 0, SEEK_END);
+		} else {
+			ofss[i] = 0;
+		}
+	}
+	close_watch();
+
+	while (1) {
+		for (int i=0; i<num_fd; i++) {
+			watched_fds[i] = open(paths[i], O_RDONLY);
+			if (watched_fds[i] != -1) {
+
+			} else {
+				if (retry)
+					continue;
+				else {
+					perror("open");
+					return errno;
+				}
+			}
+
+			// With valid fd
+			off_t n_ofs = lseek(watched_fds[i], 0, SEEK_END);
+			if (n_ofs == -1) {
+				if(!retry) {
+					perror("lseek");
+					return errno;
+				}
+			} else if (n_ofs != ofss[i]) {
+				print_offset(watched_fds[i], ofss[i]);
+				ofss[i] = n_ofs;
+			}
+		}
+		close_watch();
+		sleep(sleep_s);
+	}
 }

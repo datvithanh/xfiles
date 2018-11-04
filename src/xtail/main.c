@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
 	arguments.quiet = 0;
 	arguments.verbose = 0;
 	arguments.retry = 0;
+	arguments.sleep = 1;
 
 	argp_parse(&parser, argc, argv, 0, 0, &arguments);
 	char* file = arguments.files[0];
@@ -46,9 +47,9 @@ int main(int argc, char **argv) {
 	if (arguments.follow) {
 		signal(SIGINT, close_watch_handler);
 		if(!strcmp("descriptor", arguments.follow)) {
-			tail_fd_poll(arguments.files, arguments.sleep, arguments.retry);
+			return tail_fd_poll(arguments.files, arguments.sleep, arguments.retry);
 		} else {
-			tail_name_poll(arguments.files, arguments.sleep, arguments.retry);
+			return tail_name_poll(arguments.files, arguments.sleep, arguments.retry);
 		}
 	}
 
