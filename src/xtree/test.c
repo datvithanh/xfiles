@@ -7,6 +7,7 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define RED  "\x1B[31m"
 #define GREEN  "\x1B[32m"
@@ -75,6 +76,15 @@ char can_opened(char *path){
     return 0;
 }
 
+char can_read(struct stat st){
+    char *p = get_permission(st);
+    uid_t uid = getuid();
+    if(uid == st.st_uid || p[8] == 'r'){
+        return 1;
+    } 
+    return 0;
+}
+
 void main(){
     // char a[100] = ".test";
     char b[100] = "test3";
@@ -93,7 +103,9 @@ void main(){
     //     printf("file");
     // }
     // printf("This is " RED "red"  " and this is " BLUE "blue" RESET "\n");
-    DIR *dir;
-    dir = opendir("/boot/efi");
-    printf("%d", can_opened("/boot/efi"));
+
+    struct stat st;
+    stat("/home/manh/Dropbox", &st);
+    printf("%d\n", can_read(st));   
+
 }

@@ -7,6 +7,7 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define RED  "\x1B[31m"
 #define GREEN  "\x1B[32m"
@@ -26,7 +27,7 @@ int is_dir(char *base_path, char *new_path);
 int is_hidden(char *entry);
 char *file_name(char *path);
 char **double_size(char **a, int current_size);
-char can_opened(char *path);
+char can_read(struct stat st);
 
 long long int num_directories = 0, num_files = 0;
 
@@ -137,6 +138,10 @@ void print_tree(int print_all, int just_print_directory, int is_absolute_path, i
     if(current_depth > max_depth){
         return;
     }
+    if(!is_legal_path(path)){
+        return;
+    }
+    
     char **entry_list;
     int entry_list_size = 1000;
     entry_list = (char **) malloc(entry_list_size*sizeof(char *));
@@ -350,7 +355,7 @@ int is_legal_path(char *path){
         // } else if(ENOENT == errno){
         //     return 0;
         // } 
-        if(stat(path, &st) == 0 && S_ISDIR(st.st_mode)){
+        if(stat(path, &st) == 0 && can_read(st) && S_ISDIR(st.st_mode)){
             return 1;
         } else {
             return 0;
@@ -366,7 +371,7 @@ int is_dir(char *base_path, char *new_path){
     strcat(all_path, "/");
     strcat(all_path, new_path);
     int status = stat(all_path, &st);
-    if(S_ISDIR(st.st_mode)){
+    if(S_ISDIR(st.st_mode) && can_read(st)){
         return 1;
     } else if (S_ISREG(st.st_mode)){
         return 0;
@@ -402,13 +407,11 @@ char **double_size(char **a, int current_size){
     return b;
 }
 
-char can_opened(char *path){
-    // drwx------
-    struct stat st;
-    stat(path, &st);
+char can_read(struct stat st){
     char *p = get_permission(st);
-    if(p[2] == 'r' && p[8] == 'r'){
+    uid_t uid = getuid();
+    if(uid == st.st_uid || p[8] == 'r'){
         return 1;
-    }
+    } 
     return 0;
 }
