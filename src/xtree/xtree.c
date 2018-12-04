@@ -16,7 +16,7 @@
 #define PURPLE  "\x1B[35m"
 #define RESET "\x1B[0m"
 
-const char DEFAULT_PATH[1000] = "/";
+const char DEFAULT_PATH[2] = "/";
 
 int my_atoi(char *str, int len);
 char ** str_arr_sort(char **a, int n, int r);
@@ -28,7 +28,7 @@ int is_hidden(char *entry);
 char *file_name(char *path);
 char **double_size(char **a, int current_size);
 char can_read(struct stat st);
-
+void help();
 long long int num_directories = 0, num_files = 0;
 
 int main(int argc, char *argv[]){
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
     int max_depth = INT_MAX;
 
     //Duong dan den file/folder
-    char path[1000];
+    char path[255];
     strcpy(path, DEFAULT_PATH);
 
     int param_count = 0;
@@ -89,6 +89,9 @@ int main(int argc, char *argv[]){
                 printf("Usage: -L max_depth, with max_depth is non-negative number\n");
                 exit(1);
             }
+        } else if(!strcmp(argv[i], "--help")){
+            help();
+            exit(1);
         } else {
             int check = is_legal_path(argv[i]);
             if(check == -1){
@@ -146,7 +149,7 @@ void print_tree(int print_all, int just_print_directory, int is_absolute_path, i
     int entry_list_size = 1000;
     entry_list = (char **) malloc(entry_list_size*sizeof(char *));
     for(int i = 0; i < entry_list_size; i++){
-        entry_list[i] = (char *) malloc(1000*sizeof(char));
+        entry_list[i] = (char *) malloc(255*sizeof(char));
     }
     int num_entry = 0;
     // DIR *dir;
@@ -195,7 +198,7 @@ void print_tree(int print_all, int just_print_directory, int is_absolute_path, i
         return;
     }
     entry_list = str_arr_sort(entry_list, num_entry, lexicographical_order);
-    if(current_depth != 0){
+    if(current_depth != 0 && tab != 0){
         for(int i = 0; i < current_depth-1; i++){
             printf("|");
             for(int j = 0; j < tab; j++){
@@ -236,7 +239,7 @@ void print_tree(int print_all, int just_print_directory, int is_absolute_path, i
         // } else {
         //     puts(entry_list[i]);
         // }
-        char new_path[1000];
+        char new_path[255];
         strcpy(new_path, path);
         strcat(new_path, "/");
         strcat(new_path, entry_list[i]);
@@ -250,12 +253,16 @@ void print_tree(int print_all, int just_print_directory, int is_absolute_path, i
             } else {
                 num_files++;
                 for(int i = 0; i < current_depth; i++){
-                    printf("|");
-                    for(int j = 0; j < tab; j++){
-                        printf(" ");
+                    if(tab != 0){
+                        printf("|");
+                        for(int j = 0; j < tab; j++){
+                            printf(" ");
+                        }
                     }
                 }
-                printf("|");
+                if(tab != 0){
+                    printf("|");
+                }
                 for(int j = 0; j < tab; j++){
                     printf("-");
                 }
@@ -300,7 +307,7 @@ char *get_permission(struct stat st_buf){
 char ** str_arr_sort(char **a, int n, int r){
     char **b = (char **) malloc(n * sizeof(char **));
     for(int i = 0; i < n; i++){
-        b[i] = (char *) malloc(1000 * sizeof(char));
+        b[i] = (char *) malloc(255 * sizeof(char));
         strcpy(b[i], a[i]);
     }
     for(int i = 0; i < n-1; i++){
@@ -328,7 +335,7 @@ char ** str_arr_sort(char **a, int n, int r){
 char ** str_arr_cpy(char **a, int size){
     char **b = (char **) malloc(2*size*sizeof(char *));
     for(int i = 0; i < size; i++){
-        b[i] = (char *) malloc(1000*sizeof(char));
+        b[i] = (char *) malloc(255*sizeof(char));
         strcpy(b[i], a[i]);
     }
     return b;
@@ -399,7 +406,7 @@ char *file_name(char *path){
 char **double_size(char **a, int current_size){
     char **b = (char **) malloc(current_size*2*sizeof(char *));
     for(int i = 0; i < current_size*2; i++){
-        b[i] = (char *) malloc(1000*sizeof(char));
+        b[i] = (char *) malloc(255*sizeof(char));
         if(i < current_size){
             strcpy(b[i], a[i]);
         }
@@ -414,4 +421,18 @@ char can_read(struct stat st){
         return 1;
     } 
     return 0;
+}
+
+void help(){
+    printf("usage: ./tree [<option list>] [directory]\n");
+    printf("Re-implementation of GNU tree\n\n");
+    printf("-----------Listing options-----------\n");
+    printf("-a            All files are listed.\n");
+    printf("-d            List directories only.\n");
+    printf("-f            Print the full path prefix for each file.\n");
+    printf("--filelimit # Do not descend dirs with more than # files in them.\n");
+    printf("-p            Print the protections for each file.\n");
+    printf("-i            Don't print indentation lines.\n");
+    printf("-r            Reverse the order of the sort.\n");
+    printf("-L level      Descend only level directories deep.\n\n");
 }
