@@ -414,7 +414,7 @@ char **double_size(char **a, int current_size){
     return b;
 }
 
-char can_read(struct stat st){
+int can_read(struct stat st){
     char *p = get_permission(st);
     uid_t uid = getuid();
     if(uid == st.st_uid || p[8] == 'r'){
