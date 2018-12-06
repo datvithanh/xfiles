@@ -27,7 +27,7 @@ int is_dir(char *base_path, char *new_path);
 int is_hidden(char *entry);
 char *file_name(char *path);
 char **double_size(char **a, int current_size);
-char can_read(struct stat st);
+int can_read(struct stat st);
 void help();
 long long int num_directories = 0, num_files = 0;
 

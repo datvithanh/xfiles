@@ -10,11 +10,12 @@ Authors: Phan Ngoc Lan, Nguyen Duy Manh
 |-------	|---------------------------	|-----------------------------------------------------------------	|
 | xtail 	| Re-implementation of tail 	| ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg) 	|
 | xsplit    | Re-implementation of split 	| ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)   |
+| xtree     | Re-implementation of tree 	| ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)   |
 
 ## Quickstart
 ```bash
 # Compile all tools
-make
+make	
 
 # Install testing framework and run tests
 # Optional
