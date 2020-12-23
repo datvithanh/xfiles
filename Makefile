@@ -6,6 +6,7 @@ all: src/
 	make -j $(CORES) -C src/xtree
 	make -j $(CORES) -C src/xdiff
 	make -j $(CORES) -C src/xcat
+	make -j $(CORES) -C src/xgrep
 
 test: src/ tests/
 	make -C tests/xtail
@@ -16,6 +17,7 @@ install: bin/
 	cp bin/xtree /usr/bin/
 	cp bin/xdiff /usr/bin/
 	cp bin/xcat /usr/bin/
+	cp bin/xgrep /usr/bin/
 
 uninstall:
 	rm /usr/bin/xtail
@@ -23,3 +25,4 @@ uninstall:
 	rm /usr/bin/xtree
 	rm /usr/bin/xdiff
 	rm /usr/bin/xcat
+	rm /usr/bin/grep
